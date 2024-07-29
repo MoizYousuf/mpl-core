@@ -7,7 +7,7 @@
 
 use crate::generated::types::CompressionProof;
 #[cfg(feature = "anchor")]
-use anchor_lang::prelude::{AnchorDeserialize, AnchorSerialize};
+use anchor_lang::prelude::{AnchorDeserialize, AnchorSerialize, msg};
 #[cfg(not(feature = "anchor"))]
 use borsh::{BorshDeserialize, BorshSerialize};
 
