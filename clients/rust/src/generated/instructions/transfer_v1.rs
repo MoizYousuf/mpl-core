@@ -342,11 +342,13 @@ impl<'a, 'b> TransferV1Cpi<'a, 'b> {
             bool,
         )],
     ) -> solana_program::entrypoint::ProgramResult {
+        msg!("starting invoking TransferV1");
         let mut accounts = Vec::with_capacity(7 + remaining_accounts.len());
         accounts.push(solana_program::instruction::AccountMeta::new(
             *self.asset.key,
             false,
         ));
+        msg!("starting invoking before if else");
         if let Some(collection) = self.collection {
             accounts.push(solana_program::instruction::AccountMeta::new_readonly(
                 *collection.key,
@@ -358,10 +360,12 @@ impl<'a, 'b> TransferV1Cpi<'a, 'b> {
                 false,
             ));
         }
+        msg!("starting invoking after if else");
         accounts.push(solana_program::instruction::AccountMeta::new(
             *self.payer.key,
             true,
         ));
+        msg!("starting invoking payer");
         if let Some(authority) = self.authority {
             accounts.push(solana_program::instruction::AccountMeta::new_readonly(
                 *authority.key,
@@ -373,10 +377,12 @@ impl<'a, 'b> TransferV1Cpi<'a, 'b> {
                 false,
             ));
         }
+        msg!("starting invoking authority");
         accounts.push(solana_program::instruction::AccountMeta::new_readonly(
             *self.new_owner.key,
             false,
         ));
+        msg!("starting invoking new owner");
         if let Some(system_program) = self.system_program {
             accounts.push(solana_program::instruction::AccountMeta::new_readonly(
                 *system_program.key,
@@ -388,6 +394,7 @@ impl<'a, 'b> TransferV1Cpi<'a, 'b> {
                 false,
             ));
         }
+        msg!("starting invoking system program");
         if let Some(log_wrapper) = self.log_wrapper {
             accounts.push(solana_program::instruction::AccountMeta::new_readonly(
                 *log_wrapper.key,
@@ -399,6 +406,7 @@ impl<'a, 'b> TransferV1Cpi<'a, 'b> {
                 false,
             ));
         }
+        msg!("starting invoking log wrapper");
         remaining_accounts.iter().for_each(|remaining_account| {
             accounts.push(solana_program::instruction::AccountMeta {
                 pubkey: *remaining_account.0.key,
@@ -406,42 +414,57 @@ impl<'a, 'b> TransferV1Cpi<'a, 'b> {
                 is_writable: remaining_account.2,
             })
         });
+        msg!("starting invoking remaining accounts");
         let mut data = TransferV1InstructionData::new().try_to_vec().unwrap();
+        msg!("starting invoking data");
         let mut args = self.__args.try_to_vec().unwrap();
+        msg!("starting invoking args");
         data.append(&mut args);
-
+        msg!("starting invoking append");
         let instruction = solana_program::instruction::Instruction {
             program_id: crate::MPL_CORE_ID,
             accounts,
             data,
         };
+        msg!("starting invoking instructions");
         let mut account_infos = Vec::with_capacity(7 + 1 + remaining_accounts.len());
+        msg!("starting invoking account_infos");
         account_infos.push(self.__program.clone());
+        msg!("starting invoking account_infos program");
         account_infos.push(self.asset.clone());
+        msg!("starting invoking account_infos asset");
         if let Some(collection) = self.collection {
             account_infos.push(collection.clone());
         }
+        msg!("starting invoking account_infos collection");
         account_infos.push(self.payer.clone());
+        msg!("starting invoking account_infos payer");
         if let Some(authority) = self.authority {
             account_infos.push(authority.clone());
         }
+        msg!("starting invoking account_infos authority");
         account_infos.push(self.new_owner.clone());
         if let Some(system_program) = self.system_program {
             account_infos.push(system_program.clone());
         }
+        msg!("starting invoking account_infos system_program");
         if let Some(log_wrapper) = self.log_wrapper {
             account_infos.push(log_wrapper.clone());
         }
+        msg!("starting invoking account_infos log_wrapper");
         remaining_accounts
-            .iter()
-            .for_each(|remaining_account| account_infos.push(remaining_account.0.clone()));
-
-        if signers_seeds.is_empty() {
-            solana_program::program::invoke(&instruction, &account_infos)
-        } else {
-            solana_program::program::invoke_signed(&instruction, &account_infos, signers_seeds)
-        }
+        .iter()
+        .for_each(|remaining_account| account_infos.push(remaining_account.0.clone()));
+    msg!("starting invoking account_infos remaining_accounts");
+    
+    if signers_seeds.is_empty() {
+        msg!("starting invoking invoking without seeds");
+        solana_program::program::invoke(&instruction, &account_infos)
+    } else {
+        msg!("starting invoking invoking with seeds");
+        solana_program::program::invoke_signed(&instruction, &account_infos, signers_seeds)
     }
+}
 }
 
 /// Instruction builder for `TransferV1` via CPI.
